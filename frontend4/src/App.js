@@ -4,6 +4,7 @@ import Modal from "./components/Modal";
 import RatingModal from "./components/rating"
 import UserModal from "./components/user"
 import axios from "axios";
+import music from "./static/bensound-energy.mp3"
 import {
   BrowserRouter as Router,
   Routes,
@@ -90,6 +91,8 @@ class App extends React.Component {
         rating: 0,
         username:'',
         password:'',
+        audio: new Audio(music),
+        isPlaying: false,
       },
         songList: []
     };
@@ -128,6 +131,7 @@ class App extends React.Component {
             onClick={() => this.editItem(item)}
             className="btn btn-secondary mr-2"
           >
+
             {" "}
             Edit{" "}
           </button>
@@ -140,7 +144,7 @@ class App extends React.Component {
           </button>
 
           <button
-            // If the user clicks the Delete button, call the handleDelete function.
+            // If the user clicks the Rate button, call the handleDelete function.
             onClick={() => this.createRate(item)}
             className="btn btn-danger"
           >
@@ -205,7 +209,7 @@ class App extends React.Component {
     axios
       .post("http://localhost:8000/api/Ratings/", item)
       .then((res) => this.refreshList());
-    
+
   };
 
   handleDelete = (item) => {
@@ -232,6 +236,17 @@ class App extends React.Component {
     this.setState({ songItem: item, modal: !this.state.modal });
   };
 
+  playPause = () => {
+    let isPlaying = this.state.isPlaying;
+
+    if (isPlaying) {
+      this.state.songItem.audio.pause();
+    } else {
+      this.state.songItem.audio.play();
+    }
+    this.setState({ isPlaying: !isPlaying});
+  };
+
 
   render() {
     return (
@@ -242,17 +257,21 @@ class App extends React.Component {
             <div className="card p-3">
             <div className="y">
                {/* If the user clicks the Add task button, call the createItem function. */}
+               <p>
               <button class = 'b' onClick={this.createUser} className="btn btn-primary">
                 Sign in
 
               </button>
+              </p>
             </div>
               <div className="y">
                  {/* If the user clicks the Add task button, call the createItem function. */}
+                <p>
                 <button class = 'b' onClick={this.createItem} className="btn btn-primary">
                   Add song
 
                 </button>
+                </p>
               </div>
 
               <ul className="list-group list-group-flush">
@@ -260,6 +279,18 @@ class App extends React.Component {
               </ul>
             </div>
           </div>
+        </div>
+
+        <div>
+          <p>
+            {this.state.isPlaying ?
+              "Song is Playing" :
+              "Song is Paused"}
+          </p>
+
+          <button onClick={this.playPause}>
+            Play  |  Pause
+          </button>
         </div>
         {/* If the modal state is true, show the modal component. */}
 
@@ -271,7 +302,7 @@ class App extends React.Component {
             onSave={this.handleSubmit}
           />
         ) : null}
-    
+
         {this.state.ratingModal ? (
           <RatingModal
 
