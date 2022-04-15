@@ -1,3 +1,40 @@
+.navbar ul {
+    /*
+        Remove bullet points
+    */
+    list-style: none;
+    width: 500px;
+    margin: 0 auto;
+    /*
+        No padding
+    */
+    padding: 0;
+
+    background-color: rgb(32, 121, 76);
+    text-align: center;
+}
+
+/*
+    Style individual list items.
+*/
+.navbar li {
+    width: 150 px;
+    background-color:rgb(23, 61, 92);
+    border: 1px solid purple;
+    /*
+        Show the navbar elements next to each other instead of on top of each
+        other
+    */
+    padding: 10px;
+    display: inline-block;
+    line-height: 40px;
+}
+
+
+.navbar a {
+    color:#fff;
+    text-decoration: none;
+}
 body {
   margin: 0;
   padding: 0;
@@ -45,6 +82,24 @@ button:hover{
   background-color: #282c34;
   color: #ffffff;
   } */
+  #modal {
+  width:50px;
+  hight:50px;
+  background-color:red;
+}
+container{
+text-align: center;
+border: 7px solid red;
+width: 300px;
+height: 200px;
+padding-top: 100px;
+}
+#btn{
+font-size: 25px;
+text-align: center;
+}
+
+
   .Stitle{
     text-align: center;
     color: #A0816C;

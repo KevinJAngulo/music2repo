@@ -5,6 +5,9 @@ import RatingModal from "./components/rating"
 import UserModal from "./components/user"
 import axios from "axios";
 import music from "./static/bensound-energy.mp3"
+
+
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -93,13 +96,19 @@ class App extends React.Component {
         password:'',
         audio: new Audio(music),
         isPlaying: false,
+        search:'',
       },
-        songList: []
+      //this.state
+        songList: [],
+        ratingList:[]
     };
   }
 
   componentDidMount() {
     this.refreshList();
+  }
+  componentDidMount() {
+    this.refreshRList();
   }
 
   refreshList = () => {
@@ -111,8 +120,69 @@ class App extends React.Component {
       .catch((err) => console.log(err));
       console.log(this.state.songList);
   };
+  refreshRList = () => {
 
+    axios
+
+      .get("http://localhost:8000/api/Artists/")
+      .then((res) => this.setState({ ratingList: res.data }))
+      .catch((err) => console.log(err));
+      console.log(this.state.ratingList);
+  };
   renderItems = () => {
+    let filteredSongs = this.state.songList.filter(
+      item => {
+        return item.artist.indexOf(this.state.search) !== -1;
+      }
+    );
+
+    return filteredSongs.map((item) => (
+      <li
+        key={item.id}
+        className="list-group-item d-flex justify-content-between align-items-center"
+      >
+
+          {item.song},
+          {item.artist},
+          {item.rating}
+
+
+        {/* UI for editing and deleting items and their respective events. */}
+
+        <span>
+          <button
+            // If the user clicks the Edit button, call the editItem function.
+            onClick={() => this.editItem(item)}
+            className="btn btn-secondary mr-2"
+          >
+
+            {" "}
+            Edit{" "}
+          </button>
+          <button
+            // If the user clicks the Delete button, call the handleDelete function.
+            onClick={() => this.handleDelete(item)}
+            className="btn btn-danger"
+          >
+            Delete{" "}
+          </button>
+
+          <button
+            // If the user clicks the Rate button, call the handleDelete function.
+            onClick={() => this.createRate(item)}
+            className="btn btn-danger"
+          >
+            Rate{" "}
+          </button>
+
+        </span>
+      </li>
+
+    ));
+
+  };
+
+  renderRating = () => {
     return this.state.songList.map((item) => (
       <li
         key={item.id}
@@ -120,7 +190,7 @@ class App extends React.Component {
       >
 
           {item.song},
-          {item.artist}.
+          {item.artist},
           {item.rating}
 
         {/* UI for editing and deleting items and their respective events. */}
@@ -169,18 +239,28 @@ class App extends React.Component {
   };
 
   handleSubmit = (item) => {
+    // checkDuplicates(item);
     this.toggle();
     if (item.id) {
-      axios
-        .put(`http://localhost:8000/api/Artists/${item.id}/`, item)
-        .then((res) => this.refreshList());
-        console.log('song already added');
-      return;
+          axios
+            .put(`http://localhost:8000/api/Artists/${item.id}/`, item)
+            .then((res) => this.refreshList());
+            console.log('song already added');
+            return;
+                }
+    else if (this.checkDuplicates(item) == true){
+      alert("This song has already been added");
+      return ;
     }
-    axios
-      .post("http://localhost:8000/api/Artists/", item)
-      .then((res) => this.refreshList());
+    else{
+      axios
+        .post("http://localhost:8000/api/Artists/", item)
+        .then((res) => this.refreshList());
+            alert("Song Added!")
+    }
   };
+
+
   handleUser = (item) => {
     this.usertoggle();
 
@@ -193,13 +273,14 @@ class App extends React.Component {
     axios
       .post("http://localhost:8000/api/Users/", item)
       .then((res) => this.refreshList());
+
   };
 
   handleRate = (item) => {
     this.ratingtoggle();
     // If the item already exists in our database, i.e., we have an id for our
     // item, use a PUT request to modify it.
-    if (item) {
+    if (item.username) {
       axios
         .put(`http://localhost:8000/api/Ratings/${item.song}/`, item)
         .then((res) => this.refreshList());
@@ -216,6 +297,7 @@ class App extends React.Component {
     axios
       .delete(`http://localhost:8000/api/Artists/${item.id}`)
       .then((res) => this.refreshList());
+      alert("Song deleted!")
   };
 
   createItem = () => {
@@ -247,12 +329,27 @@ class App extends React.Component {
     this.setState({ isPlaying: !isPlaying});
   };
 
+  updateSearch(event){
+    this.setState({search: event.target.value.substr(0,20)});
+    // console.log(event.target.value);
+  };
+
+ checkDuplicates = (item) => {
+     for (var i = 0 ; i < this.state.songList.length ; i++){
+       if (this.state.songList[i].song == item.song && this.state.songList[i].artist == item.artist){
+           return true
+         };
+       };
+     };
+
+
 
   render() {
     return (
       <main className="content">
         <h1 className="Stitle">Music Rating App</h1>
         <div className="row ">
+        <div class="container">
           <div className="col-md-6 col-sm-10 mx-auto p-0">
             <div className="card p-3">
             <div className="y">
@@ -273,25 +370,40 @@ class App extends React.Component {
                 </button>
                 </p>
               </div>
+              <div>
+              <input
+                type="text"
+                value={this.state.search}
+                // "this" refers to the current event. If there is a change,
+                // it will be passed to the handleChange function above.
+                onChange={this.updateSearch.bind(this)}
+                placeholder="Enter artist"
+              />
+              </div>
 
               <ul className="list-group list-group-flush">
                 {this.renderItems()}
               </ul>
+              </div>
+              </div>
             </div>
-          </div>
-        </div>
+            </div>
+
 
         <div>
           <p>
+
             {this.state.isPlaying ?
               "Song is Playing" :
               "Song is Paused"}
+
           </p>
 
-          <button onClick={this.playPause}>
+          <button id="btn" onClick={this.playPause}>
             Play  |  Pause
           </button>
         </div>
+
         {/* If the modal state is true, show the modal component. */}
 
         {this.state.modal ? (
