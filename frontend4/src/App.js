@@ -107,9 +107,9 @@ class App extends React.Component {
   componentDidMount() {
     this.refreshList();
   }
-  componentDidMount() {
-    this.refreshRList();
-  }
+  // componentDidMount() {
+  //   this.refreshRList();
+  // }
 
   refreshList = () => {
 
@@ -120,15 +120,15 @@ class App extends React.Component {
       .catch((err) => console.log(err));
       console.log(this.state.songList);
   };
-  refreshRList = () => {
-
-    axios
-
-      .get("http://localhost:8000/api/Artists/")
-      .then((res) => this.setState({ ratingList: res.data }))
-      .catch((err) => console.log(err));
-      console.log(this.state.ratingList);
-  };
+  // refreshRList = () => {
+  //
+  //   axios
+  //
+  //     .get("http://localhost:8000/api/Artists/")
+  //     .then((res) => this.setState({ ratingList: res.data }))
+  //     .catch((err) => console.log(err));
+  //     console.log(this.state.ratingList);
+  // };
   renderItems = () => {
     let filteredSongs = this.state.songList.filter(
       item => {
@@ -182,51 +182,51 @@ class App extends React.Component {
 
   };
 
-  renderRating = () => {
-    return this.state.songList.map((item) => (
-      <li
-        key={item.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-
-          {item.song},
-          {item.artist},
-          {item.rating}
-
-        {/* UI for editing and deleting items and their respective events. */}
-
-        <span>
-          <button
-            // If the user clicks the Edit button, call the editItem function.
-            onClick={() => this.editItem(item)}
-            className="btn btn-secondary mr-2"
-          >
-
-            {" "}
-            Edit{" "}
-          </button>
-          <button
-            // If the user clicks the Delete button, call the handleDelete function.
-            onClick={() => this.handleDelete(item)}
-            className="btn btn-danger"
-          >
-            Delete{" "}
-          </button>
-
-          <button
-            // If the user clicks the Rate button, call the handleDelete function.
-            onClick={() => this.createRate(item)}
-            className="btn btn-danger"
-          >
-            Rate{" "}
-          </button>
-
-        </span>
-      </li>
-
-    ));
-
-  };
+  // renderRating = () => {
+  //   return this.state.songList.map((item) => (
+  //     <li
+  //       key={item.id}
+  //       className="list-group-item d-flex justify-content-between align-items-center"
+  //     >
+  // 
+  //         {item.song},
+  //         {item.artist},
+  //         {item.rating}
+  //
+  //       {/* UI for editing and deleting items and their respective events. */}
+  //
+  //       <span>
+  //         <button
+  //           // If the user clicks the Edit button, call the editItem function.
+  //           onClick={() => this.editItem(item)}
+  //           className="btn btn-secondary mr-2"
+  //         >
+  //
+  //           {" "}
+  //           Edit{" "}
+  //         </button>
+  //         <button
+  //           // If the user clicks the Delete button, call the handleDelete function.
+  //           onClick={() => this.handleDelete(item)}
+  //           className="btn btn-danger"
+  //         >
+  //           Delete{" "}
+  //         </button>
+  //
+  //         <button
+  //           // If the user clicks the Rate button, call the handleDelete function.
+  //           onClick={() => this.createRate(item)}
+  //           className="btn btn-danger"
+  //         >
+  //           Rate{" "}
+  //         </button>
+  //
+  //       </span>
+  //     </li>
+  //
+  //   ));
+  //
+  // };
 
   toggle = () => {
     this.setState({ modal: !this.state.modal });

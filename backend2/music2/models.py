@@ -21,9 +21,8 @@ class Artist(models.Model):
 
 
 class Rating(models.Model):
-    class Meta:
-        unique_together = (('username', 'song'),)
-    
+
+    id = models.AutoField(primary_key=True)
     username = models.CharField( max_length=100)
     song = models.CharField( max_length=100)
     rating = models.IntegerField()
